@@ -19,3 +19,23 @@ def calculate_and_display_average_price(data):
 
     average_price = data['Close'].mean()
     print(f"Средняя цена закрытия акций за период: {average_price:.2f}")
+
+
+def notify_if_strong_fluctuations(data, threshold):
+    if 'Close' not in data.columns:
+        print("Колонка 'Close' не найдена в данных.")
+        return
+    min_price = data['Close'].min()
+    max_price = data['Close'].max()
+
+    print(f'Минимальная цена {min_price}')
+    print(f'Максимальная цена {max_price}')
+
+    difference = max_price - min_price
+    percentage_fluctuation = (difference / min_price) * 100
+
+    if percentage_fluctuation > threshold:
+        print(f'Уведомление: Разница превышает порог на {percentage_fluctuation - threshold}%')
+    else:
+        print(f'Разница не превышает порог: колебание составило {percentage_fluctuation}%')
+
