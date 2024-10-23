@@ -39,3 +39,10 @@ def notify_if_strong_fluctuations(data, threshold):
     else:
         print(f'Разница не превышает порог: колебание составило {percentage_fluctuation}%')
 
+
+def export_data_to_csv(data, filename):
+    try:
+        data.to_csv(filename, index=False)
+        print(f'Данные успешно экспортированы в {filename}.')
+    except Exception as e:
+        print(f'Ошибка при экспорте данных: {e}')

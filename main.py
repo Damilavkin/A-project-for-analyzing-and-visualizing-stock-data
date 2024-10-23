@@ -1,3 +1,5 @@
+import pandas as pd
+
 import data_download as dd
 import data_plotting as dplt
 
@@ -17,10 +19,12 @@ def main():
     stock_data = dd.add_moving_average(stock_data)
     # Calculate and display average price
     dd.calculate_and_display_average_price(stock_data)
-
+    # Сalculates the percentage fluctuation
     dd.notify_if_strong_fluctuations(stock_data,threshold)
     # Plot the data
     dplt.create_and_save_plot(stock_data, ticker, period)
+
+    dd.export_data_to_csv(stock_data, "Output_html")
 
 
 if __name__ == "__main__":
