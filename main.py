@@ -24,7 +24,7 @@ def main():
     # Plot the data
     dplt.create_and_save_plot(stock_data, ticker, period)
 
-    dd.export_data_to_csv(stock_data, "Output_html")
+    dd.export_data_to_csv(stock_data, "Output_to_csv")
 
 
 if __name__ == "__main__":
