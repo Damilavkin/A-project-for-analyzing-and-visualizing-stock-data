@@ -1,2 +1,2 @@
 .idea
-py
+__pycache__/
