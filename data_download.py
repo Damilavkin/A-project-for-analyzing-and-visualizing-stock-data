@@ -1,3 +1,4 @@
+import pandas as pd
 import yfinance as yf
 
 
@@ -96,3 +97,63 @@ def export_data_to_csv(data, filename):
         print(f'Данные успешно экспортированы в {filename}.')
     except Exception as e:
         print(f'Ошибка при экспорте данных: {e}')
+
+
+def calculate_rsi(data, window=14):
+    """
+    Вычисляет индекс относительной силы (RSI) для заданных данных.
+
+    Args:
+        data (pd.Series): Серия цен закрытия.
+        window (int): Период для расчета RSI.
+
+    Returns:
+        pd.Series: Серия значений RSI.
+    """
+    delta = data.diff()
+    gain = (delta.where(delta > 0, 0)).rolling(window=window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
+
+    rs = gain / loss
+    rsi = 100 - (100 / (1 + rs))
+
+    return rsi
+
+
+def calculate_macd(data, short_window=12, long_window=26, signal_window=9):
+    """
+    Вычисляет MACD для заданных данных.
+
+    Args:
+        data (pd.Series): Серия цен закрытия.
+        short_window (int): Период для краткосрочной скользящей средней.
+        long_window (int): Период для долгосрочной скользящей средней.
+        signal_window (int): Период для сигнальной линии.
+
+    Returns:
+        pd.DataFrame: DataFrame с MACD и сигналом.
+    """
+    short_ema = data.ewm(span=short_window, adjust=False).mean()
+    long_ema = data.ewm(span=long_window, adjust=False).mean()
+
+    macd = short_ema - long_ema
+    signal = macd.ewm(span=signal_window, adjust=False).mean()
+
+    return pd.DataFrame({'MACD': macd, 'Signal': signal})
+
+
+def add_technical_indicators(stock_data):
+    """
+    Добавляет технические индикаторы (RSI и MACD) к данным акций.
+
+    Args:
+        stock_data (pd.DataFrame): DataFrame с историческими данными акций.
+
+    Returns:
+        pd.DataFrame: DataFrame с добавленными колонками 'RSI', 'MACD' и 'Signal'.
+    """
+    stock_data['RSI'] = calculate_rsi(stock_data['Close'])
+    macd_df = calculate_macd(stock_data['Close'])
+    stock_data = pd.concat([stock_data, macd_df], axis=1)
+
+    return stock_data

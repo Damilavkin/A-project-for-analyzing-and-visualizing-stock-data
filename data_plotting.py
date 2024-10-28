@@ -4,43 +4,51 @@ import pandas as pd
 
 def create_and_save_plot(data, ticker, period, filename=None):
     """
-    Создает и сохраняет график цен акций с указанием цены закрытия и скользящей средней.
+    Создает и сохраняет график цен акций с указанием цены закрытия,
+    скользящей средней, RSI и MACD.
 
     Args:
-        data (pd.DataFrame): DataFrame с историческими данными о ценах акций.
-                             Должен содержать колонки 'Close' и 'Moving_Average'.
-        ticker (str): Тикер акций, которые отображаются на графике.
-        period (str): Период, за который были получены данные (например, '1mo').
+        data (pd.DataFrame): DataFrame с историческими данными акций.
+        ticker (str): Тикер акций для отображения на графике.
+        period (str): Период, за который получены данные.
         filename (str, optional): Имя файла для сохранения графика.
-                                  Если не указано, будет автоматически сгенерировано.
 
     Returns:
         None
     """
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 12))
 
-    # Проверяем, есть ли информация о дате в данных
-    if 'Date' not in data:
-        if pd.api.types.is_datetime64_any_dtype(data.index):
-            dates = data.index.to_numpy()
-            plt.plot(dates, data['Close'].values, label='Close Price')
-            plt.plot(dates, data['Moving_Average'].values, label='Moving Average')
-        else:
-            print("Информация о дате отсутствует или не имеет распознаваемого формата.")
-            return
-    else:
-        # Преобразуем колонку 'Date' в datetime, если это необходимо
-        if not pd.api.types.is_datetime64_any_dtype(data['Date']):
-            data['Date'] = pd.to_datetime(data['Date'])
+    # График цен
+    plt.subplot(3, 1, 1)
+    plt.plot(data.index, data['Close'], label='Close Price', color='blue')
 
-        plt.plot(data['Date'], data['Close'], label='Close Price')
-        plt.plot(data['Date'], data['Moving_Average'], label='Moving Average')
-
-    # Настройка заголовка и меток графика
+    if 'Moving_Average' in data.columns:
+        plt.plot(data.index, data['Moving_Average'], label='Moving Average', color='orange')
     plt.title(f"{ticker} Цена акций с течением времени")
     plt.xlabel("Дата")
     plt.ylabel("Цена")
     plt.legend()
+
+    # График RSI
+    if 'RSI' in data.columns:
+        plt.subplot(3, 1, 2)
+        plt.plot(data.index, data['RSI'], label='RSI', color='purple')
+        plt.axhline(70, color='red', linestyle='--')
+        plt.axhline(30, color='green', linestyle='--')
+        plt.title(f"{ticker} Индекс относительной силы (RSI)")
+        plt.xlabel("Дата")
+        plt.ylabel("RSI")
+        plt.legend()
+
+    # График MACD
+    if 'MACD' in data.columns and 'Signal' in data.columns:
+        plt.subplot(3, 1, 3)
+        plt.plot(data.index, data['MACD'], label='MACD', color='blue')
+        plt.plot(data.index, data['Signal'], label='Signal', color='orange')
+        plt.title(f"{ticker} MACD")
+        plt.xlabel("Дата")
+        plt.ylabel("MACD")
+        plt.legend()
 
     # Генерация имени файла, если оно не было задано
     if filename is None:
@@ -48,5 +56,5 @@ def create_and_save_plot(data, ticker, period, filename=None):
 
     # Сохранение графика
     plt.savefig(filename)
-    plt.close()  # Закрываем текущее окно графика после сохранения
+    plt.close()
     print(f"График сохранен как {filename}")
