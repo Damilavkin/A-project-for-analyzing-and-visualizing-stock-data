@@ -2,7 +2,7 @@ import pandas as pd
 import yfinance as yf
 
 
-def fetch_stock_data(ticker, period='1mo'):
+def fetch_stock_data(ticker, start_date=None, end_date=None, period='1mo'):
     """
     Извлекает исторические данные о ценах акций для указанного тикера.
 
@@ -14,7 +14,13 @@ def fetch_stock_data(ticker, period='1mo'):
         pd.DataFrame: DataFrame с историческими данными о ценах акций.
     """
     stock = yf.Ticker(ticker)
-    data = stock.history(period=period)
+    if start_date and end_date:
+        # Если указаны даты начала и окончания, получаем данные за этот диапазон
+        data = stock.history(start=start_date, end=end_date)
+    else:
+        # В противном случае используем предустановленный период
+        data = stock.history(period=period)
+
     return data
 
 
