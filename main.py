@@ -42,7 +42,8 @@ def main():
     dd.notify_if_strong_fluctuations(stock_data, threshold)
 
     # Строим график данных
-    dplt.create_and_save_plot(stock_data, ticker,period)
+    chosen_style = input("Выберите стиль графика (например, 'ggplot', 'seaborn-darkgrid', 'bmh'): ")
+    dplt.create_and_save_plot(stock_data, ticker,period,style=chosen_style)
 
     # Экспортируем данные в CSV файл
     dd.export_data_to_csv(stock_data, "Output_to_csv")

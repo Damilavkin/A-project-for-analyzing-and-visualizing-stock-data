@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def create_and_save_plot(data, ticker, period, filename=None):
+def create_and_save_plot(data, ticker, period, filename=None, style='default'):
     """
     Создает и сохраняет график цен акций с указанием цены закрытия,
     скользящей средней, RSI и MACD.
@@ -12,10 +12,13 @@ def create_and_save_plot(data, ticker, period, filename=None):
         ticker (str): Тикер акций для отображения на графике.
         period (str): Период, за который получены данные.
         filename (str, optional): Имя файла для сохранения графика.
+        style (str): Стиль графика (по умолчанию 'default').
 
     Returns:
         None
     """
+    # Устанавливаем стиль графика
+    plt.style.use(style)
     plt.figure(figsize=(12, 12))
 
     # График цен
@@ -24,6 +27,7 @@ def create_and_save_plot(data, ticker, period, filename=None):
 
     if 'Moving_Average' in data.columns:
         plt.plot(data.index, data['Moving_Average'], label='Moving Average', color='orange')
+
     plt.title(f"{ticker} Цена акций с течением времени")
     plt.xlabel("Дата")
     plt.ylabel("Цена")
