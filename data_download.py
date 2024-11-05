@@ -163,3 +163,6 @@ def add_technical_indicators(stock_data):
     stock_data = pd.concat([stock_data, macd_df], axis=1)
 
     return stock_data
+
+
+

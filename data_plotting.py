@@ -2,6 +2,25 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
+def calculate_statistics(data):
+    """
+    Рассчитывает и возвращает статистические индикаторы для цены закрытия.
+
+    Args:
+        data (pd.DataFrame): DataFrame с историческими данными акций.
+
+    Returns:
+        dict: Словарь со статистическими индикаторами.
+    """
+    statistics = {
+        'mean': data['Close'].mean(),
+        'std_dev': data['Close'].std(),
+        'median': data['Close'].median(),
+        'max': data['Close'].max(),
+        'min': data['Close'].min(),
+    }
+    return statistics
+
 def create_and_save_plot(data, ticker, period, filename=None, style='default'):
     """
     Создает и сохраняет график цен акций с указанием цены закрытия,
@@ -17,7 +36,6 @@ def create_and_save_plot(data, ticker, period, filename=None, style='default'):
     Returns:
         None
     """
-    # Устанавливаем стиль графика
     plt.style.use(style)
     plt.figure(figsize=(12, 12))
 
@@ -25,15 +43,24 @@ def create_and_save_plot(data, ticker, period, filename=None, style='default'):
     plt.subplot(3, 1, 1)
     plt.plot(data.index, data['Close'], label='Close Price', color='blue')
 
+    # Скользящая средняя (при наличии в данных)
     if 'Moving_Average' in data.columns:
         plt.plot(data.index, data['Moving_Average'], label='Moving Average', color='orange')
+
+    # Добавляем стандартное отклонение
+    mean = data['Close'].mean()
+    std_dev = data['Close'].std()
+    upper_bound = mean + std_dev
+    lower_bound = mean - std_dev
+
+    plt.fill_between(data.index, upper_bound, lower_bound, color='grey', alpha=0.3, label='±1 Standard Deviation')
 
     plt.title(f"{ticker} Цена акций с течением времени")
     plt.xlabel("Дата")
     plt.ylabel("Цена")
     plt.legend()
 
-    # График RSI
+    # График RSI (при наличии в данных)
     if 'RSI' in data.columns:
         plt.subplot(3, 1, 2)
         plt.plot(data.index, data['RSI'], label='RSI', color='purple')
@@ -44,7 +71,7 @@ def create_and_save_plot(data, ticker, period, filename=None, style='default'):
         plt.ylabel("RSI")
         plt.legend()
 
-    # График MACD
+    # График MACD (при наличии в данных)
     if 'MACD' in data.columns and 'Signal' in data.columns:
         plt.subplot(3, 1, 3)
         plt.plot(data.index, data['MACD'], label='MACD', color='blue')
@@ -62,3 +89,5 @@ def create_and_save_plot(data, ticker, period, filename=None, style='default'):
     plt.savefig(filename)
     plt.close()
     print(f"График сохранен как {filename}")
+
+
