@@ -41,6 +41,9 @@ def main():
     # Экспортируем данные в CSV файл
     dd.export_data_to_csv(stock_data, "Output_to_csv")
 
+    # Создаем интерактивный график
+    dplt.create_interactive_plot(stock_data, ticker)
+
 
 if __name__ == "__main__":
     main()

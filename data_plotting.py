@@ -91,3 +91,29 @@ def create_and_save_plot(data, ticker, period, filename=None, style='default'):
     print(f"График сохранен как {filename}")
 
 
+def create_interactive_plot(data, ticker):
+    import plotly.graph_objects as go
+
+    # Вычисление среднего значения
+    mean_close = data['Close'].mean()
+    print(f"Среднее значение цены закрытия: {mean_close:.2f}")
+
+    # Создание интерактивного графика
+    fig = go.Figure()
+
+    # Добавляем линию для цен закрытия
+    fig.add_trace(go.Scatter(x=data.index, y=data['Close'], mode='lines', name='Цена закрытия', line=dict(color='blue')))
+
+    # Добавляем линию для среднего значения
+    fig.add_trace(go.Scatter(x=data.index, y=[mean_close]*len(data), mode='lines', name='Среднее значение', line=dict(color='orange', dash='dash')))
+
+    # Название графика
+    fig.update_layout(title=f"{ticker} Цена акций",
+                      xaxis_title='Дата',
+                      yaxis_title='Цена',
+                      legend_title='Легенда')
+
+    # Показываем график
+    fig.show()
+
+
